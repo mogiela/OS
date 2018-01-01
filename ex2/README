@@ -1,0 +1,76 @@
+nivpgir, almog
+Niv Pagir(305328692), Almog BarShalom(308174788)
+EX: 2
+
+
+
+uthreads.cpp -- implementation of the uthreads library.
+Uhread.cpp -- implementation of the uthread class.
+Makefile --  compiles uthreads.cpp into a library, creates a tar.
+README -- this file.
+
+
+ANSWERS:
+
+1.	No, the benefits that would be achieved would not be the same.
+	for example: if a kernel level thread crash everything crushes, opposed
+	to process where if one crushes then only he crushes.
+
+	Advantages of creating new process (instead of kernel level threads):
+	 * Security - it is more difficult to share data between process.
+	 * Stability - when one process crash only he crash, when a process
+					crash he takes everyone with him.
+
+   	Disadvantages of creating new process (instead of kernel level threads):
+	 * Communication - it is easier to share memory between kernel threads
+	 then process.
+	 * Overhead - process are a more heavy weight objects, for example 
+				  every process requires several unique data structures
+				  while a thread shares some of its structures.
+
+
+2.	The kill command in the shell call to the kill() system call, which in 		
+his turn sends signals to the process that belongs to the PID through
+interrupts that is made by the OS.
+
+	the kill() command can send two signals, we can choose between them with 		
+flags :
+	SIGTERM and SIGKILL.
+	SIGTERM is used commonly, because it can be stopped with an handler,  		
+for example can stop and save before closing.
+
+	SIGKILL on the other hand can not be stopped or handled by anything.
+	
+	writing on the keyboard sends interrupts that trigers a function from
+the interrupts vector, that interprets what is being writing to the
+shell. when the kill command is invoked it does what we described
+above.and then the application that handles the signal force termination.
+
+
+3.	virtual is the time that the thing actually runs and real time is
+absulte time. meaning virtual time is <= real time.for this program we
+used virtual time to mange the thread changing,for example for knowing
+when to change to the next thread.real time we use if we want to tell our
+user good morning or good night.
+
+4.	a. fork() copies the parent process's environment into the child
+process.fork uses copy on write, so the parent and child share the same
+memory resources (global variables, stack and heap) until one writes to
+the requested memory and then the he gets is own copy of the memory, from
+this moment, their resources are separate. 
+	b. pipe is when you connect the output(stdout) of one process to the
+input(stdin) of another process, basically creating a pipe between the
+two process.
+
+
+
+
+
+	
+
+
+
+
+
+
+

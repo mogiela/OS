@@ -1,0 +1,83 @@
+nivpgir, almog
+Niv Pagir(308259001), Almog BarShalom (308174788)
+EX: 4
+
+
+FILES:
+README					- this file
+Makefile				- for the compilation of the framework and the search
+CachingFileSystem.cpp 	- source file of the CachingFileSystem
+cache.cpp				- source file of the cache class
+block.cpp				- source file of the block class
+
+
+
+
+ANSWERS TO THEORETICAL PART:
+
+1.  When our process writes to memory, the os may cache our memory and put it
+    in the disk,to free memory for other process. and in that case, accessing
+    it will mean accessing the disk.
+    so, if our process is in the memory it will be faster.
+
+
+2.  implementing an fbr algorithm for sapping pages of memory will be less
+    efficient
+    for 2 reasons:
+        a) the amount of memory on modern computers is very large and this would
+           result in a very large table for keeping record of the data for each
+           page, which would make the OS use a big part of the computers memory
+           which is undesirable.
+        b) the TLB is located on the cpu and is managed by it, it would be very
+           difficult to utilize it when implementing the page cache as a process
+           which doesn't have access to the utilities of the CPU.
+
+
+3.  A) LFU > LRU
+        order of cache requests A, B, C , A, A, A, B, C, D, A
+        cache size: 3
+        now let us observe the cache state using either algorithm:
+
+        LRU        |      LFU       |   Last request
+        [A]        |      [A]       |   A
+        [A,B]      |      [A,B]     |   B
+        [A,B,C]    |      [A,B,C]   |   C
+        [B,C,A]    |      [B,C,A]   |   A
+        [B,C,A]    |      [B,C,A]   |   A
+        [B,C,A]    |      [B,C,A]   |   A
+        [C,A,B]    |      [C,B,A]   |   B
+        [A,B,C]    |      [C,B,A]   |   C
+        [B,C,D]    |      [D,B,A]   |   D
+        [A,C,D]    |      [D,B,A]   |   A
+
+        in the last operation the LRU cache causes a cache miss
+        and so it performed worse.
+
+    B) LRU > LFU
+        let us consider a stream of cache requests B,B,A,C,A
+        and a cache of size 2
+        now let us observe the cache state using either algorithm:
+
+    LRU cache state | LFU cache state |   Last request
+        [B]         |       [B]       |   B
+        [B]         |       [B]       |   B
+        [B,A]       |       [A,B]     |   A
+        [A,C]       |       [C,B]     |   C
+        [A,C]       |       [A,B]     |   A
+
+        in the last operation the LFU cache cause a cache miss and so
+        it performed worse.
+
+    C) LRU,LFU <<
+       the case where neither algorithm is efficient and in fact no caching
+       algorithm is, is the use case where every cache request in the stream is
+       unique as such there is no use in storing past requests since it would be
+       a waste of space and operations.
+
+
+4.  the reason we do not increase the ref count of blocks in the new section is
+    that we would like to prevent the case in which a certain block gets called
+    a large amount of times for a short time period and afterwards is never
+    called again. if we would allow increase of ref counts to blocks in the new
+    section it would cause the said block to remain in cache for a long time
+    even after it's no longer necessary.

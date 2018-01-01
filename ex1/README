@@ -1,0 +1,118 @@
+almog, nivpgir
+Almog BarShalom (308174788), Niv Pagir (305328692)
+EX: 1
+
+FILES:
+
+osm.c - a code that measures the time it takes the cpu to do some operations
+
+
+ANSWERS:
+
+Task 1
+------
+
+1. brk(0)                                  = 0xa48000
+Retrives the adress of the end of the data segment allocated to the process. 
+
+2. brk(0xa69000)                           = 0xa69000
+Sets the end of the data segment allocated to the process to the new address.
+Thereby, allocating additional memory to the process.
+
+3. mkdir("Welcome", 0775)                       = 0
+Creates a directory named "Welcome" with the following permissions - 
+Owner and Group : read, write and execute.
+Other : read and execute.
+
+4. mkdir("Welcome/To", 0775)                  = 0
+Creates a sub directory named "To" located inside the "os" directory 
+previously created, with the same permissions.
+
+5. open("Welcome/To/OS", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3
+O_CREAT flag - If a file names "OS" does not exist inside the To directory, 
+one will be created with the 0666 permissions (read-write).
+O_TRUNC flag - if the file allready exist, and is a regular file,
+and the access mode allows writing, it will be truncated to length 0.
+O_WRONLY flag - the file will be opened in write only mode.
+
+6. fstat(3, {st_mode=S_IFREG|0644, st_size=0, ...}) = 0
+If the file is regular, its permissions will be set to 0644 
+(owner : read-write, group and other - read only),
+and its size will be set to 0.
+
+7. mmap(NULL, 65536, PROT_READ|PROT_WRITE, MAP_PRIVATE|
+MAP_ANONYMOUS, -1, 0) = 0x7f749993c000
+creates a new mapping in the virtual address space of the calling process.
+The address at which the mapping will be created is chosen by the kernal.
+The length of the mapping will be 65536. 
+Prot:
+PROT_READ|PROT_WRITE - Pages may be read and written.
+Flags: 
+MAP_PRIVATE - Create a private copy-on-write mapping.
+Updates to the mapping are not visible to other processes mapping the same file,
+and are not carried through to the underlying file.
+MAP_ANONYMOUS - The mapping is not backed by any file.
+its contents are initialized to zero.
+
+8. write(3, "If you didn't read the course guidelines, please do it now!\n
+                                                                              
+                                nivpgir\nandalmog", 186) = 186
+Writes 186 spaces which ends with the username\n of the user running the 
+process. And then, the input string.
+
+9. close(3)                                = 0
+Closes the file, meaning 3 doesnt refer any file, and may be reused.
+
+10. munmap(0x7f749993c000, 65536)           = 0
+deletes the mappings for the specified address range,
+and causes further references to addresses within the range 
+to generate invalid memory references.
+
+11. unlink("Welcome/To/OS")                  = 0
+deletes the "OS" file name from the filesystem and delete it if it the last 
+link to the file.
+
+12. rmdir(""Welcome/To/")                       = 0
+deletes the "To" directory.
+
+13. rmdir("Welcome/")                            = 0
+deletes the ""Welcome" directory.
+
+14. exit_group(0)                           = ?
+Exit the process and all of its threads.
+
+Summary - 
+The process creates a directory named "Welcome" and in it a 
+directory named "To",in said subdirectory it creates a file named "OS" 
+in which  - "If you didn't read the course guidelines, please do it now!\n + 
+the login of the user running the process + the input string are written.
+then the program deletes said file and directories and exits.
+
+
+Task 2
+------
+All of our library functions operate in a similar way: 
+- measuring current time. (using getTimeOfDay)
+- looping and performing requried operations. 
+  (with loop unrolling, as to reduce loop overhead)
+- measuring time after the loop. (using getTimeOfDay)
+- calculating the time difference. 
+- converting time difference to nano seconds units. 
+- returning the averege.
+
+In osm_disk_time we use the open() function combined with the O_DIRECT and the 
+O_SYNC flag, O_DIRECT ensures us a direct access to the disk, and O_SYNC ensures
+that the program will not continue until the disk operations are finished.
+
+also, since O_DIRECT requires a memory bulk aligned to the disk sector size,
+since we cannot test for the disk sector size (that would require super user
+permissions, which we do not have) we assume it is 512 and allocate memory
+aligned to 512(using posix_memalign()), we then write to the disk using that 
+memory and free it after the end of the test.
+
+
+In the measureTimes function we call all the other functions and the return 
+the averege time that we measured and the ration between them.
+
+In the osm_init we allocate memory for the hostName.
+In the osm_finalizer we free the allocated memory.
